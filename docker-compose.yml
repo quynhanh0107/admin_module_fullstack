@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # 1. Cấu hình PostgreSQL
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: rbac_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: "010706"
+      POSTGRES_DB: rbac_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Cấu hình Redis Cache
+  redis_cache:
+    image: redis:7-alpine
+    container_name: rbac_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+
+volumes:
+  postgres_data:

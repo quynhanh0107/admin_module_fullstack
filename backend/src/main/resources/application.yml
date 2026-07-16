@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: admin-module
+
+  # 1. Cấu hình kết nối PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5433/rbac_db
+    username: admin
+    password: 4550
+    driver-class-name: org.postgresql.Driver
+
+  # 2. Cấu hình JPA / Hibernate (Công cụ ánh xạ Java - SQL)
+  jpa:
+    hibernate:
+      # Lệnh 'validate' dặn Spring Boot: Chỉ kiểm tra xem code Java có khớp với bảng SQL không, tuyệt đối không được tự ý xóa/sửa bảng của tôi.
+      ddl-auto: validate 
+    show-sql: true # In câu lệnh SQL ra console để dễ debug
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # 3. Cấu hình kết nối Redis Cache
+  data:
+    redis:
+      host: localhost
+      port: 6379
