@@ -2,14 +2,22 @@ package com.adminmodule.backend.service;
 
 import com.adminmodule.backend.entity.User;
 import com.adminmodule.backend.entity.Role;
+import com.adminmodule.backend.entity.Action;
 import com.adminmodule.backend.repository.RoleRepository;
 import com.adminmodule.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.password.PasswordEncoder;;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +91,29 @@ public class UserService {
 
         // nếu trùng khớp mật khẩu, trả về username để in kèm với Token
         return user.getUsername();
+    }
+
+    // Thu thập toàn bộ vai trò và quyền của người dùng
+    @Transactional(readOnly = true)
+    public List<GrantedAuthority> getUserAuthorities(String username) {
+        // tìm người dùng khả dụng
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
+        
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        // loop through từng role
+        for (Role role: user.getRoles()) {
+            // Spring Security quy ước: Tên Role có chữ ROLE_ đứng trước
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+
+            // loop through từng action trong role đó
+            for (Action action: role.getActions()) {
+                authorities.add(new SimpleGrantedAuthority(action.getCode()));
+            }
+        }
+        // trả về danh sách quyền đã tổng hợp
+        return new ArrayList<>(authorities);
     }
 }
 

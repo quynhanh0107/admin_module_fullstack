@@ -50,7 +50,7 @@ public class JWTUtil {
             Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
