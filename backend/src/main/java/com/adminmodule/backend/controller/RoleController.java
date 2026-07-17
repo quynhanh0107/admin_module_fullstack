@@ -4,11 +4,10 @@ import com.adminmodule.backend.entity.Role;
 import com.adminmodule.backend.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -21,6 +20,7 @@ public class RoleController {
     // API tạo vai trò mới 
     // URL: POST http://localhost:8080/api/roles
     @PostMapping()
+    @PreAuthorize("hasAuthority('CREATE_ROLE') or hasRole('ADMIN')")
     public ResponseEntity<Role> createRole(@RequestBody Map<String, String> payload) {
         String roleName = payload.get("roleName");
 
@@ -32,6 +32,7 @@ public class RoleController {
     // API Cấp 1 quyền cho 1 vai trò
     // URL: POST http://localhost::8080/api/roles/assign-roles
     @PostMapping("/assign-action")
+    @PreAuthorize("hasAuthority('ASSIGN_ACTION') or hasRole('ADMIN')")
     public ResponseEntity<Role> assignActionToRole (@RequestBody Map<String, String> payload) {
         String actionCode = payload.get("actionCode");
         String roleName = payload.get("roleName");

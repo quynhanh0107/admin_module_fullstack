@@ -4,6 +4,7 @@ import com.adminmodule.backend.entity.User;
 import com.adminmodule.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -34,6 +35,7 @@ public class UserController {
 
     // API lấy thông tin user (dùng GET)
     @GetMapping("/{username}") // chuyên để đọc (GET) dữ liệu; {...} truyền một biến vào (VD: .../api/users/admin hay .../api/users/student)
+    @PreAuthorize("hasAuthority('VIEW_USER') or hasRole('ADMIN')")
     public ResponseEntity<User> getMethodName(@PathVariable String username) {
         // gọi service để tìm username 
         User user = userService.getUserByUsername(username);
@@ -46,6 +48,7 @@ public class UserController {
     // API Cấp Vai trò cho user
     // URL: POST http://localhost:8080/api/users/assign-role
     @PostMapping("/assign-role")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLE') or hasRole('ADMIN')")
     public ResponseEntity<User> assignRoleToUser(@RequestBody Map<String, String> payload) {
         String userName = payload.get("username");
         String roleName = payload.get("roleName");
