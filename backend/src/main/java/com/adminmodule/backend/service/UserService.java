@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +87,7 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại!"));
         
         if (!passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
-            throw new RuntimeException("Mật khẩu không chính xác!");
+            throw new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không chính xác!");
         }
 
         // nếu trùng khớp mật khẩu, trả về username để in kèm với Token
@@ -98,7 +99,7 @@ public class UserService {
     public List<GrantedAuthority> getUserAuthorities(String username) {
         // tìm người dùng khả dụng
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
+            .orElseThrow(() -> new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không chính xác!"));
         
         Set<GrantedAuthority> authorities = new HashSet<>();
 
