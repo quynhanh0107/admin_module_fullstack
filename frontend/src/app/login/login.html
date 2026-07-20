@@ -1,0 +1,19 @@
+<div class="login-container">
+    <h2>Đăng nhập để truy cập</h2> 
+    <form (ngSubmit)="onSubmit()"> 
+        <div class="input-group">
+            <label>Tên đăng nhập: </label>
+            
+            <!--[(ngModel)] cho phép 2 binding giữa HTML và TS-->
+            <input type="text" name="username" [(ngModel)]="username" required>
+        </div>
+
+        <div class="input-group">
+            <label>Mật khẩu: </label>
+            <input type="password" name="password" [(ngModel)]="password" required>
+        </div>
+
+        <button type="submit">Đăng nhập</button>
+    </form>
+</div> 
+    
