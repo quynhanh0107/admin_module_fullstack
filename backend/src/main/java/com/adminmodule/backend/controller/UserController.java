@@ -1,5 +1,6 @@
 package com.adminmodule.backend.controller;
 
+import com.adminmodule.backend.dto.UserResponseDTO;
 import com.adminmodule.backend.entity.User;
 import com.adminmodule.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class UserController {
 
     // API dky tai khoan dung POST
     @PostMapping("/register") // chuyên nhận POST và sẽ chạy nếu client gọi .../api/users/register 
-    public ResponseEntity<User> registerUser(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody Map<String, String> payload) {
         // lấy username và password (được gộp vào trong map) từ dữ liệu client gửi
         String username = payload.get("username");
         String password = payload.get("password");
@@ -30,7 +31,10 @@ public class UserController {
         // Gọi Service để tạo người dùng mới
         User newUser = userService.createUser(username, password);
         
-        return ResponseEntity.ok(newUser);
+        // chỉ lưu đưa những thông tin chung, ko bao gồm mật khẩu
+        UserResponseDTO dto = new UserResponseDTO(newUser.getId(), newUser.getUsername());
+
+        return ResponseEntity.ok(dto);
     }
 
     // API lấy thông tin user (dùng GET)

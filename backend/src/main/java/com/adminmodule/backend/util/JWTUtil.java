@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
 import java.util.Date;
@@ -11,17 +12,16 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    // tạo chữ ký bí mật của Server (một chuỗi cố định tối thiểu 32 ký tự)
-    private static final String SECRET_KEY = "MotCauFanChantRatHayMaMinhRatThichDoLaCuaMCKAnhLongEmFanAnhAnhChoEmXinKieuAnh";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    //thời gian sống của vé (vd: 24h)
-    // hết thời gian, người dùng phải đăng nhập lại
-    private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000;
+    @Value("${jwt.expiration-ms:86400000}") 
+    private long expireDuration;
 
     // Dùng HMAC-SHA thuật toán để mã hóa các Bytes trong SECRET_KEY
     // dùng như là một argument cho .signwith() ở dưới khi tạo JWT
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     // hàm tạo Token dựa trên username
@@ -29,7 +29,7 @@ public class JWTUtil {
         return Jwts.builder()
             .setSubject(username) // gắn tên user vào vé
             .setIssuedAt(new Date()) // Thời gian bắt đầu phát hành Token
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION)) // thời gian hết hạn Token
+            .setExpiration(new Date(System.currentTimeMillis() + expireDuration)) // thời gian hết hạn Token
             .signWith(getSigningKey(), SignatureAlgorithm.HS256)
             .compact(); // xuất Token
     }

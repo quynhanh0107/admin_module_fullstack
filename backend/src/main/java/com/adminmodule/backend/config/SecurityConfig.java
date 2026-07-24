@@ -34,7 +34,7 @@ public class SecurityConfig {
             .csrf(csfr -> csfr.disable())
             .authorizeHttpRequests(auth -> auth
                 // cho phép mở cổng nếu thực hiện đăng nhập/dky
-                .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
+                .requestMatchers("/api/auth/login", "/api/users/register", "/api/auth/refresh", "/api/auth/logout").permitAll()
                 //tất cả các request khác sẽ bị khóa
                 .anyRequest().authenticated()
             )
