@@ -25,8 +25,13 @@ export class Login {
 
     this.auth.login(payload).subscribe({
       next: (response) => {
-        console.log("Đăng nhập thành công! Token của bạn: ", response);
-        alert("Đăng nhập thành công");
+        const token = response.token;
+        if (token) {
+          // lưu token
+          this.auth.saveToken(token);
+          alert("Đăng nhập thành công! Đã lưu token.")
+        }
+        
       },
       error: (err) => {
         console.error("Lỗi: ", err);
