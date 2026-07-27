@@ -7,9 +7,11 @@ import com.adminmodule.backend.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,8 +35,13 @@ public class AuthController {
         // kiểm tra đăng nhập xem đúng tên đăng nhập/mật khẩu không
         String validUsername = userService.verifyLogin(username, password);
 
+        // lấy danh sách các quyền khi đăng nhập
+        List<String> roles = userService.getUserAuthorities(validUsername).stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toList());
+        
         //tạo Token dựa vào tên đăng nhập
-        String token_ngan_han = jwtUtil.generateToken(validUsername);
+        String token_ngan_han = jwtUtil.generateToken(validUsername, roles);
 
         // tạo refresh token lưu vào Redis
         String refreshToken = refreshTokenService.createRefreshToken(validUsername);
@@ -59,8 +66,13 @@ public class AuthController {
             throw new RuntimeException("Refresh Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!");
         }
         
+        // khi cấp lại token cũng đi kèm với quyền
+        List<String> roles = userService.getUserAuthorities(username).stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         // cấp lại token ngắn hạn mới
-        String newAccessToken = jwtUtil.generateToken(username);
+        String newAccessToken = jwtUtil.generateToken(username, roles);
 
         Map<String, Object> response = new HashMap<>();
         response.put("token_ngan_han", newAccessToken);

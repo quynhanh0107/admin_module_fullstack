@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 
 @Component
@@ -25,9 +26,10 @@ public class JWTUtil {
     }
 
     // hàm tạo Token dựa trên username
-    public String generateToken(String username) {
+    public String generateToken(String username, List<String> roles) {
         return Jwts.builder()
             .setSubject(username) // gắn tên user vào vé
+            .claim("roles", roles)
             .setIssuedAt(new Date()) // Thời gian bắt đầu phát hành Token
             .setExpiration(new Date(System.currentTimeMillis() + expireDuration)) // thời gian hết hạn Token
             .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -42,6 +44,15 @@ public class JWTUtil {
             .parseClaimsJws(token) // soát Token: kiểm tra tính toàn vẹn (xem Token có bị thay đổi) và niên hạn sử dụng
             .getBody() // lấy phần thông tin của Token, gồm 3 phần: Header, Payload, Signature
             .getSubject(); // lấy tên chủ thể và trả lại 
+    }
+
+    public List<String> extractRoles(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .get("roles", List.class);
     }
 
     // kiểm tra vé có hợp lệ

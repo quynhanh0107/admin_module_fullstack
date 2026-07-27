@@ -12,10 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -38,7 +40,11 @@ public class JwtFilter extends OncePerRequestFilter{
             if(jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
 
-                List<GrantedAuthority> authorities = userService.getUserAuthorities(username);
+                // lấy role từ jwt và chuyển sang GrantedAuthority
+                List<String> roles = jwtUtil.extractRoles(token);
+                List<GrantedAuthority> authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role))
+                        .collect(Collectors.toList());
 
                 // đánh dấu là đã qua kiểm duyệt
                 //tạo đối tượng để quyết định phân quyền, với 3 tham số: 

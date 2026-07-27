@@ -37,4 +37,10 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    // liên kết 1-1 ngược lại với UserProfile
+    // mappedBy = "user" phải khớp chính xác với tên biến 'user' khai báo bên file UserProfile.java
+    // cascade = CascadeType.ALL: khi xóa User thì tự động xóa luôn Profile của ng đó
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private UserProfile userProfile;
 }
