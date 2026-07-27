@@ -24,12 +24,13 @@ export class Login {
     };
 
     this.auth.login(payload).subscribe({
-      next: (response) => {
-        const token = response.token;
-        if (token) {
+      next: (response: any) => {
+        const accessToken = response.token_ngan_han;
+        const refreshToken = response.refreshToken;
+        if (accessToken && refreshToken) {
           // lưu token
-          this.auth.saveToken(token);
-          alert("Đăng nhập thành công! Đã lưu token.")
+          this.auth.saveToken(accessToken, refreshToken);
+          alert("Đăng nhập thành công! Đã lưu cả 2 token.")
         }
         
       },
