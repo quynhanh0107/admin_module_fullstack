@@ -4,7 +4,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Auth } from './auth';
 
-@Injectable
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: Auth) {}
 

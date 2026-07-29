@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <!--tiêu đề và button mới-->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">Danh sách Khóa học</h2>
+        <button class="btn btn-success shadow-sm" routerLink="/courses/create">
+            + Thêm khóa học
+        </button>
+    </div>
+
+    <!--thêm cảnh bảo (nếu có)-->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+        {{errorMessage}}
+    </div>
+
+    <!--bảng dữ liệu bằng Bootstrap-->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0 text-center align-middle">
+                <thead class="table-dark">
+                    <!--<tr> means a table row, which includes <td> tags-->
+                    <!--<th> defines a table header, which usually inside <thead> tags-->
+                    <!--<td> defines a table cell-->
+                    <!--<thead> groups a <th> tags-->
+                    <!--<tbody> groups <tr> tags>-->
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã Khóa Học</th>
+                        <th>Tên Môn Học</th>
+                        <th>Số Tín Chỉ</th>
+                        <th>Phân Loại</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--loop in ra các khóa học-->
+                    <tr *ngFor="let course of courses; let i = index">
+                        <td>{{i+1}}</td>
+                        <td class="fw-bold text-secondary">{{course.courseCode}}</td>
+                        <td class="text-start">{{course.name}}</td>
+                        <td>
+                            <span class="badge bg-info text-dark rounded-pill px-3 py-2">
+                                {{course.credits}} tín chỉ
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                [ngClass]="course.courseType === 'BẮT BUỘC' ? 'bg-danger' : 'bg-secondary'">
+                            {{course.courseType}}    
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-2">Sửa</button>
+                            <button class="btn btn-sm btn-outline-danger">Xóa</button>
+                        </td>
+                    </tr>
+
+                    <!--trạng thái khi ko có dữ liệu-->
+                    <tr *ngIf="courses.length === 0 && !errorMessage">
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Chưa có khóa học nào trong hệ thống.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
