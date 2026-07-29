@@ -6,6 +6,8 @@ import com.adminmodule.backend.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CourseService {
@@ -27,5 +29,9 @@ public class CourseService {
 
         //lưu xuống db
         return courseRepository.save(newCourse);
+    }
+
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
     }
 }
