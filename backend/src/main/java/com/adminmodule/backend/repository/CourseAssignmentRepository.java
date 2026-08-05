@@ -11,4 +11,5 @@ import java.util.UUID;
 @Repository
 public interface CourseAssignmentRepository extends JpaRepository<CourseAssignment, CourseAssignmentID> {
     List<CourseAssignment> findByCourseId(UUID courseId);
+    List<CourseAssignment> findByTeacher_Username(String username);
 }

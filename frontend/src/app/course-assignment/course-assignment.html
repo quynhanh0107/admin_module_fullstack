@@ -1,0 +1,54 @@
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <!-- Header -->
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Phân Công Giảng Dạy</h4>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body bg-light">
+            <div class="row">
+                <!-- Dropdown Chọn Giáo Viên -->
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">1. Chọn Giáo Viên <span class="text-danger">*</span></label>
+                    <select class="form-select" [(ngModel)]="assignmentData.teacherId">
+                        <option value="" disabled selected>-- Vui lòng chọn giáo viên --</option>
+                        <option *ngFor="let teacher of teachers" [value]="teacher.id">
+                            {{ teacher.fullName }} {{ teacher.username }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Dropdown Chọn Khóa Học -->
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">2. Chọn Khóa Học <span class="text-danger">*</span></label>
+                    <select class="form-select" [(ngModel)]="assignmentData.courseId">
+                        <option value="" disabled selected>-- Vui lòng chọn khóa học --</option>
+                        <option *ngFor="let course of courses" [value]="course.id">
+                            [{{ course.courseCode }}] - {{ course.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Dropdown Chọn Vai Trò -->
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">3. Vai Trò Giảng Dạy</label>
+                    <select class="form-select" [(ngModel)]="assignmentData.roleType">
+                        <option value="GIANG_VIEN_CHINH">Giảng viên chính</option>
+                        <option value="TRO_GIANG">Trợ giảng (T.A)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer text-end bg-white">
+            <button class="btn btn-outline-secondary me-2" (click)="resetForm()">Nhập lại</button>
+            <button class="btn btn-primary" 
+                    [disabled]="!assignmentData.courseId || !assignmentData.teacherId" 
+                    (click)="submitAssignment()">
+                Xác Nhận Phân Công
+            </button>
+        </div>
+    </div>
+</div>

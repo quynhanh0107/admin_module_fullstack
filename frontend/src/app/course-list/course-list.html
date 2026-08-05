@@ -1,27 +1,25 @@
-<div class="container-fluid">
-    <!--tiêu đề và button mới-->
+<div class="container-fluid mt-4">
+    <!-- Tiêu đề và button mới -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary mb-0">Danh sách Khóa học</h2>
-        <button class="btn btn-success shadow-sm" routerLink="/courses/create">
+        <!-- Thay đổi routerLink thành sự kiện (click) bật popup -->
+        <button class="btn btn-success shadow-sm" (click)="openCreateCoursePop()">
             + Thêm khóa học
         </button>
     </div>
 
-    <!--thêm cảnh bảo (nếu có)-->
-    <div class="alert alert-danger" *ngIf="errorMessage">
-        {{errorMessage}}
-    </div>
+    <!-- Thông báo lỗi -->
+    @if (errorMessage) {
+        <div class="alert alert-danger">
+            {{errorMessage}}
+        </div>
+    }
 
-    <!--bảng dữ liệu bằng Bootstrap-->
+    <!-- Bảng dữ liệu -->
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <table class="table table-hover table-striped mb-0 text-center align-middle">
                 <thead class="table-dark">
-                    <!--<tr> means a table row, which includes <td> tags-->
-                    <!--<th> defines a table header, which usually inside <thead> tags-->
-                    <!--<td> defines a table cell-->
-                    <!--<thead> groups a <th> tags-->
-                    <!--<tbody> groups <tr> tags>-->
                     <tr>
                         <th>STT</th>
                         <th>Mã Khóa Học</th>
@@ -32,36 +30,104 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!--loop in ra các khóa học-->
-                    <tr *ngFor="let course of courses; let i = index">
-                        <td>{{i+1}}</td>
-                        <td class="fw-bold text-secondary">{{course.courseCode}}</td>
-                        <td class="text-start">{{course.name}}</td>
-                        <td>
-                            <span class="badge bg-info text-dark rounded-pill px-3 py-2">
-                                {{course.credits}} tín chỉ
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge"
-                                [ngClass]="course.courseType === 'BẮT BUỘC' ? 'bg-danger' : 'bg-secondary'">
-                            {{course.courseType}}    
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-2">Sửa</button>
-                            <button class="btn btn-sm btn-outline-danger">Xóa</button>
-                        </td>
-                    </tr>
+                    <!-- Lặp danh sách khóa học -->
+                    @for (course of courses; track course.courseCode; let i = $index) {
+                        <tr>
+                            <td>{{i + 1}}</td>
+                            <td class="fw-bold text-secondary">{{course.courseCode}}</td>
+                            <td class="text-start">{{course.name}}</td>
+                            <td>
+                                <span class="badge bg-info text-dark rounded-pill px-3 py-2">
+                                    {{course.credits}} tín chỉ
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                    [ngClass]="course.courseType === 'BẮT BUỘC' ? 'bg-danger' : 'bg-secondary'">
+                                    {{course.courseType}}    
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditCoursePop(course)">Sửa</button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="deleteCourse(course)">Xóa</button>
+                            </td>
+                        </tr>
+                    }
 
-                    <!--trạng thái khi ko có dữ liệu-->
-                    <tr *ngIf="courses.length === 0 && !errorMessage">
-                        <td colspan="6" class="text-center text-muted py-4">
-                            Chưa có khóa học nào trong hệ thống.
-                        </td>
-                    </tr>
+                    <!-- Trạng thái khi không có dữ liệu -->
+                    @if (courses.length === 0 && !errorMessage) {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Chưa có khóa học nào trong hệ thống.
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- --- POPUP THÊM KHÓA HỌC ---- -->
+<div class="modal fade" 
+     [class.show]="isCreatePopOpen" 
+     [style.display]="isCreatePopOpen ? 'block' : 'none'" 
+     tabindex="-1" 
+     style="background-color: rgba(0,0,0,0.5);">
+    
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            
+            <!-- Header Modal -->
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">{{ isEditMode ? 'Cập Nhật Khóa Học' : 'Thêm Khóa Học Mới' }}</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeCreateCoursePop()"></button>
+            </div>
+
+            <!-- Body Modal (Form) -->
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mã khóa học:</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="newCourse.courseCode" 
+                           placeholder="VD: INT101..."
+                           autocomplete="off">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên môn học:</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="newCourse.name" 
+                           placeholder="Nhập tên môn học...">
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Số tín chỉ:</label>
+                        <input type="number" class="form-control" 
+                               [(ngModel)]="newCourse.credits" min="1" max="10">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Phân loại:</label>
+                        <select class="form-select" [(ngModel)]="newCourse.courseType">
+                            <option value="BẮT BUỘC">BẮT BUỘC</option>
+                            <option value="TỰ CHỌN">TỰ CHỌN</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" (click)="closeCreateCoursePop()">Hủy bỏ</button>
+                <button type="button" class="btn btn-success" 
+                        [disabled]="!newCourse.courseCode || !newCourse.name || !newCourse.credits" 
+                        (click)="confirmCreateCourse()">
+                    {{ isEditMode ? 'Lưu Thay Đổi' : 'Tạo Khóa Học' }}
+                </button>
+            </div>
+            
         </div>
     </div>
 </div>

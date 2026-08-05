@@ -1,6 +1,7 @@
 package com.adminmodule.backend.controller;
 
 import com.adminmodule.backend.service.UserService;
+import com.adminmodule.backend.entity.User;
 import com.adminmodule.backend.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.adminmodule.backend.util.JWTUtil;
@@ -35,6 +36,8 @@ public class AuthController {
         // kiểm tra đăng nhập xem đúng tên đăng nhập/mật khẩu không
         String validUsername = userService.verifyLogin(username, password);
 
+        User user = userService.getUserByUsername(validUsername);
+
         // lấy danh sách các quyền khi đăng nhập
         List<String> roles = userService.getUserAuthorities(validUsername).stream()
                                         .map(GrantedAuthority::getAuthority)
@@ -50,6 +53,9 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         response.put("token_ngan_han", token_ngan_han);
         response.put("refreshToken", refreshToken);
+        response.put("username", validUsername);
+        response.put("actions", roles);
+        response.put("userId", user.getId());
 
         // trả về token đính kèm message và token cho client
         return ResponseEntity.ok(response);

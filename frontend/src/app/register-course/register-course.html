@@ -1,0 +1,40 @@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold mb-0"> Đăng Ký Môn Học</h2>
+        <span class="badge bg-light text-dark border fs-6 p-2">Học kỳ 1 - 2026</span>
+    </div>
+
+    <!-- Danh sách các khóa học đang mở -->
+    <div class="row">
+        @if (availableCourses.length === 0) {
+        <div class="col-12 text-center text-muted mt-5">
+            <h5>Hiện tại chưa có môn học nào mở đăng ký.</h5>
+        </div>
+        }
+
+        @for (course of availableCourses; track course.id) {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 border-top border-primary border-4 transition-hover">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold text-dark">{{ course.name }}</h4>
+                    <hr class="text-muted">
+                    <p class="card-text mb-4">
+                        <i class="fs-5 me-2"></i> Số tín chỉ: <strong>{{ course.credits }} TC</strong>
+                    </p>
+
+                    <button class="btn w-100 fw-bold"
+                        [ngClass]="isEnrolled(course.id) ? 'btn-secondary' : 'btn-outline-success'"
+                        [disabled]="isEnrolled(course.id)" (click)="enrollCourse(course.id)">
+
+                        @if (isEnrolled(course.id)) {
+                        <i class="bi bi-check-circle me-1"></i> Đã Đăng Ký
+                        } @else {
+                        Đăng Ký Ngay
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

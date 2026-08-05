@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
 
 
 @RestController
@@ -48,6 +49,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    //api lấy danh sách tất cả người dùng
+    @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_USER') or hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
     // Thêm API sau khi viết RoleController.java
     // API Cấp Vai trò cho user
     // URL: POST http://localhost:8080/api/users/assign-role
@@ -61,5 +69,28 @@ public class UserController {
 
         return ResponseEntity.ok(updatedUser);
     }
-    
+
+    @DeleteMapping("/{username}/roles/{roleName}")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLE') or hasRole('ADMIN')") // Phân quyền (bạn có thể đổi 'ASSIGN_ROLE' thành quyền phù hợp của hệ thống)
+    public ResponseEntity<?> revokeRole(@PathVariable String username, @PathVariable String roleName) { 
+        
+        // Gọi xuống tầng Service để xử lý logic
+        userService.revokeRoleFromUser(username, roleName);
+        
+        // Nên trả về dạng JSON (Map) thay vì chuỗi String trần để Angular dễ đọc hơn
+        return ResponseEntity.ok(Map.of("message", "Đã thu hồi quyền thành công"));
+    }
+
+    // Endpoint xóa người dùng
+    @DeleteMapping("/{username}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+        try {
+            userService.deleteUserByUsername(username); 
+            return ResponseEntity.ok(Map.of("message", "Xóa tài khoản thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi xóa tài khoản: " + e.getMessage());
+        }
+    }
+
 }

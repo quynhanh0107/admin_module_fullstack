@@ -1,0 +1,68 @@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold mb-0">Nhập Điểm Học Sinh</h2>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body bg-light">
+            <label class="form-label fw-bold">Chọn Khóa Học / Lớp Học:</label>
+            <!-- Dropdown chọn khóa học -->
+            <select class="form-select border-info w-50" 
+                    [(ngModel)]="selectedCourseId" 
+                    (change)="onCourseSelect()">
+                <option value="">-- Vui lòng chọn một khóa học --</option>
+                
+                @for (course of courses; track course.id) {
+                    <option [value]="course.id">[{{ course.courseCode }}] - {{ course.name }}</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Chỉ hiện bảng điểm khi giáo viên đã chọn lớp -->
+    @if (selectedCourseId) {
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped align-middle text-center mb-0">
+                    <thead class="table-info">
+                        <tr>
+                            <th style="width: 10%;">STT</th>
+                            <th style="width: 20%;">Mã Sinh Viên</th>
+                            <th style="width: 40%; text-align: left;">Họ và Tên</th>
+                            <th style="width: 30%;">Điểm Số (Hệ 10)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (students.length === 0) {
+                            <tr>
+                                <td colspan="4" class="py-4 text-muted">Lớp này hiện chưa có học sinh nào.</td>
+                            </tr>
+                        }
+
+                        @for (student of students; track student.studentId; let i = $index) {
+                            <tr>
+                                <td>{{ i + 1 }}</td>
+                                <td class="fw-bold">{{ student.studentId }}</td>
+                                <td class="text-start">{{ student.studentName }}</td>
+                                <td>
+                                    <!-- Ô nhập điểm có gán ngModel -->
+                                    <input type="number" 
+                                           class="form-control text-center mx-auto" 
+                                           style="width: 100px;" 
+                                           min="0" max="10" step="0.1"
+                                           [(ngModel)]="student.score"
+                                           placeholder="-">
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white text-end p-3">
+                <button class="btn btn-primary px-5" (click)="saveScores()" [disabled]="students.length === 0">
+                    Lưu Điểm
+                </button>
+            </div>
+        </div>
+    }
+</div>

@@ -44,6 +44,13 @@ public class UserService {
         );
     }
 
+    //lấy danh sach tất cả người dùng
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users;
+    }
+
+
     // Tạo mới 1 người dùng (đăng ký)
     public User createUser(String username, String rawPassword) {
         if (userRepository.existsByUsername(username)) {
@@ -115,6 +122,35 @@ public class UserService {
         }
         // trả về danh sách quyền đã tổng hợp
         return new ArrayList<>(authorities);
+    }
+
+    // thu hồi quyền từ user
+    @Transactional
+    public void revokeRoleFromUser(String username, String roleName) {
+        // tìm User theo username
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản: " + username));
+        
+        // tìm Role theo roleName
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy quyền: " + roleName));
+        
+        // xóa Role khỏi danh sách roles của User
+        user.getRoles().remove(role);
+        
+        // lưu lại user vào db
+        userRepository.save(user);
+    }
+
+    // xóa user khỏi hệ thống
+    @Transactional
+    public void deleteUserByUsername(String username) {
+        // ktra xem user có tồn tại không
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản: " + username));
+
+        // xóa user
+        userRepository.delete(user);
     }
 }
 

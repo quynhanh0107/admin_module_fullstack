@@ -1,1 +1,140 @@
-<p>role-list works!</p>
+<div class="container-fluid mt-4">
+    <!-- Tiêu đề và nút Thêm mới -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">Quản lý Phân Quyền (Roles)</h2>
+        <button class="btn btn-success shadow-sm" (click)="openCreateRoleModal()">
+            + Thêm Vai Trò
+        </button>
+    </div>
+
+    <!-- alert báo lỗi -->
+    <div class="alert alert-danger" *ngIf="errorMessage">{{errorMessage}}</div>
+
+    <!-- Bảng danh sách Role -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0 text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên Vai Trò (Role)</th>
+                        <th>Số lượng quyền</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let role of roles; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td class="fw-bold text-success">{{ role.name }}</td>
+                        <td>
+                            <span class="badge bg-info text-dark">
+                                {{ role.actions ? role.actions.length : 0 }} quyền
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" (click)="openConfigPopup(role)">
+                                ⚙️ Cấu hình Quyền
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- CHECKBOX cấp quyền -->
+<div class="modal fade" 
+     [class.show]="isPopOpen" 
+     [style.display]="isPopOpen ? 'block' : 'none'" 
+     tabindex="-1" 
+     style="background-color: rgba(0,0,0,0.6);">
+    
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg cho form rộng ra -->
+        <div class="modal-content shadow-lg">
+            
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    Cấu hình quyền cho: <span class="text-warning fw-bold">{{ selectedRole?.name }}</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <p class="mb-3 text-muted">Vui lòng tick chọn các chức năng mà Vai trò này được phép sử dụng:</p>
+                
+                <!-- Hiển thị Checkbox chia làm 2 cột bằng Bootstrap Grid -->
+                <div class="row">
+                    <div class="col-md-6 mb-2" *ngFor="let action of allActions">
+                        <div class="form-check form-switch border rounded p-2 shadow-sm"> <!-- Dùng form-switch nhìn cho giống nút gạt iOS -->
+                            <!-- Input Checkbox -->
+                            <input class="form-check-input ms-1" type="checkbox" 
+                                   [id]="'check_' + action.code"
+                                   [value]="action.code"
+                                   [checked]="selectedActionCodes.includes(action.code)"
+                                   (change)="toggleAction(action.code, $event)">
+                            
+                            <!-- Label hiển thị -->
+                            <label class="form-check-label fw-bold ms-2 cursor-pointer" [for]="'check_' + action.code">
+                                {{ action.code }}
+                                <br>
+                                <small class="text-muted fw-normal">{{ action.module }}</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-3 mb-0" *ngIf="allActions.length === 0">
+                    Chưa có Action nào trong Database. Hãy tạo Action trước!
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Đóng</button>
+                <button type="button" class="btn btn-primary px-4" (click)="saveRoleActions()">
+                    💾 Lưu Cấu Hình
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- ----- popup: TẠO VAI TRÒ MỚI ---- -->
+<div class="modal fade" 
+     [class.show]="isCreateRolePopOpen" 
+     [style.display]="isCreateRolePopOpen ? 'block' : 'none'" 
+     tabindex="-1" 
+     style="background-color: rgba(0,0,0,0.5);">
+    
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Tạo Vai Trò Mới</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeCreateRoleModal()"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên Vai Trò (Role Name):</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="newRoleName" 
+                           placeholder="VD: TEACHER, STUDENT, MANAGER..."
+                           autocomplete="off">
+                    <small class="text-muted fst-italic">Gợi ý: Nên viết hoa và không dấu theo chuẩn Spring Security.</small>
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" (click)="closeCreateRoleModal()">Hủy bỏ</button>
+                <button type="button" class="btn btn-success px-4" 
+                        [disabled]="!newRoleName" 
+                        (click)="confirmCreateRole()">
+                    Lưu Vai Trò
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>

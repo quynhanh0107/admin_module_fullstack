@@ -26,15 +26,25 @@ export class Login {
 
     this.auth.login(payload).subscribe({
       next: (response: any) => {
+        console.log('Toàn bộ Response đăng nhập:', response);
         const accessToken = response.token_ngan_han;
         const refreshToken = response.refreshToken;
         if (accessToken && refreshToken) {
           // lưu token
           this.auth.saveToken(accessToken, refreshToken);
+          if (response.username) {
+            localStorage.setItem('username', response.username);
+          }
+          if (response.actions) {
+            localStorage.setItem('actions', JSON.stringify(response.actions));
+          }
+          if (response.userId) {
+            localStorage.setItem('userId', response.userId);
+          }
           alert("Đăng nhập thành công!");
 
           // điều hướng về trang chủ
-          this.route.navigate(['/']);
+          this.route.navigate(['/dashboard']);
         }
         
       },

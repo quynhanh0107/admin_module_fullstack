@@ -17,7 +17,7 @@ public class CourseAssignmentController {
 
     // cChỉ ai có quyền phân công giáo viên mới được gọi
     @PostMapping
-    @PreAuthorize("hasAuthority('ASSIGN_TEACHERS')")
+    @PreAuthorize("hasAuthority('ASSIGN_TEACHERS') or hasRole('ADMIN')")
     public ResponseEntity<?> assignTeacherToCourse(@RequestBody CourseAssignmentRequestDTO request) {
         try {
             CourseAssignment assignment = assignmentService.assignTeacher(request);

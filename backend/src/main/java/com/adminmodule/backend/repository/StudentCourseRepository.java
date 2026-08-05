@@ -16,4 +16,6 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, St
     
     // tìm toàn bộ bảng điểm của 1 hsinh
     List<StudentCourse> findByStudentId(UUID studentId);
+
+    List<StudentCourse> findByCourseId(UUID courseId);
 }

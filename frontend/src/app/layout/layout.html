@@ -10,24 +10,79 @@
       
       <!--menu -->
       <ul class="nav flex-column mt-3">
-        <!--routerLink dùng cho SPA (single page app)-->
-        <!--routerLink ko tải lại trang mà chỉ đổi URL và render các component yêu cầu-->
-        <!--khác với href: full page reload-->
+        <!-- Ai cũng thấy trang chủ Dashboard -->
         <li class="nav-item">
-          <a class="nav-link text-light px-4 py-3" routerLink="/courses" routerLinkActive="bg-primary text-white">
-            Quản lý Khóa học
+          <a class="nav-link text-light px-4 py-3" routerLink="/dashboard" routerLinkActive="bg-primary text-white fw-bold">
+            Trang Chủ
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-light px-4 py-3" routerLink="/users" routerLinkActive="bg-primary text-white">
-            Quản lý Người dùng
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-light px-4 py-3" routerLink="/roles" routerLinkActive="bg-primary text-white">
-            Quản lý Quyền
-          </a>
-        </li>
+
+        @if (isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/admin-overview" routerLinkActive="bg-primary text-white fw-bold">
+              Tổng Quan Học Vụ
+            </a>
+          </li>
+        }
+        
+        <!-- Cú pháp @if MỚI của Angular 17+ -->
+        @if (hasAction('VIEW_COURSE')) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/courses" routerLinkActive="bg-primary text-white fw-bold">
+              Quản lý Khóa học
+            </a>
+          </li>
+        }
+
+        @if (hasAction('VIEW_USER')) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/users" routerLinkActive="bg-primary text-white fw-bold">
+              Quản lý Người dùng
+            </a>
+          </li>
+        }
+
+        @if (hasAction('VIEW_ROLE')) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/roles" routerLinkActive="bg-primary text-white fw-bold" >
+              Quản lý Quyền
+            </a>
+          </li>
+        }
+
+        @if (hasAction('CREATE_CLASS')) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/course-assignment" routerLinkActive="bg-primary text-white fw-bold">
+              Phân Công Giảng Dạy
+            </a>
+          </li>
+        }
+
+        <!-- MENU DÀNH RIÊNG CHO GIÁO VIÊN  -->
+        @if (hasAction('INPUT_GRADES')&& !isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/enter-score" routerLinkActive="bg-primary text-white fw-bold">
+              Nhập Điểm Học Sinh
+            </a>
+          </li>
+        }
+
+        <!-- MENU DÀNH RIÊNG CHO HỌC SINH -->
+        @if (hasAction('REGISTER_DEGREE')&& !isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/register-course" routerLinkActive="bg-primary text-white">
+              Đăng Ký Môn Học
+            </a>
+          </li>
+        }
+
+        @if (hasAction('VIEW_OWN_TRANSCRIPT')&& !isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link text-light px-4 py-3" routerLink="/my-scores" routerLinkActive="bg-primary text-white">
+              Bảng Điểm Của Tôi
+            </a>
+          </li>
+        }
       </ul>
     </nav>
 
@@ -37,10 +92,10 @@
       <!-- header -->
       <header class="d-flex justify-content-between align-items-center p-3 bg-white border-bottom shadow-sm">
         <div class="fs-5">
-          Xin chào, <strong>Admin</strong>
+          <strong class="text-primary">{{ username }}</strong>
         </div>
         <button class="btn btn-outline-danger" (click)="onLogout()">
-          Đăng xuất 🚪
+          Đăng xuất
         </button>
       </header>
 

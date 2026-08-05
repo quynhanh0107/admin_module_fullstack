@@ -27,4 +27,13 @@ export class CourseService{
     createCourses(courseData: any): Observable<any> {
         return this.http.post<any>(this.apiUrl, courseData);
     }
+
+    // sửa/cập nhật các khóa học (dùng PUT)
+    updateCourse(id: string, courseData: any): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/${id}`, courseData);
+    }
+
+    deleteCourse(id: string): Observable<any> {
+        return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    }
 }

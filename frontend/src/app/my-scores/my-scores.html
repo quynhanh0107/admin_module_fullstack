@@ -1,0 +1,60 @@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="text-primary fw-bold mb-1">Bảng Điểm Của Tôi</h2>
+        </div>
+        
+        <!-- Hiển thị GPA -->
+        <div class="bg-white px-4 py-2 rounded shadow-sm border border-warning">
+            <span class="text-muted me-2">Điểm Trung Bình (Hệ 10):</span>
+            <span class="fs-4 fw-bold text-danger">{{ averageScore | number:'1.1-2' }}</span>
+        </div>
+    </div>
+
+    <!-- Bảng điểm chi tiết -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="table-info">
+                    <tr>
+                        <th style="width: 10%;">STT</th>
+                        <th style="width: 15%;">Mã Môn</th>
+                        <th style="width: 35%; text-align: left;">Tên Khóa Học</th>
+                        <th style="width: 15%;">Tín Chỉ</th>
+                        <th style="width: 25%;">Điểm Số</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (myScores.length === 0) {
+                        <tr>
+                            <td colspan="5" class="py-5 text-muted">Bạn chưa đăng ký khóa học nào.</td>
+                        </tr>
+                    }
+
+                    @for (item of myScores; track item.courseId; let i = $index) {
+                        <tr [class.table-light]="item.grade === null">
+                            <td>{{ i + 1 }}</td>
+                            <td class="fw-bold">{{ item.course?.courseCode }}</td>
+                            <td class="text-start">{{ item.course?.name }}</td>
+                            <td>{{ item.course?.credits }}</td>
+                            <td>
+                                @if (item.grade !== null && item.grade !== undefined) {
+                                    <span class="fs-5 fw-bold" 
+                                          [class.text-success]="item.grade >= 5"
+                                          [class.text-danger]="item.grade < 5">
+                                        {{ item.grade }}
+                                    </span>
+                                } @else {
+                                    <!-- Nếu chưa có điểm: Báo chờ cập nhật -->
+                                    <span class="badge bg-secondary text-light fw-normal py-2 px-3">
+                                        Chờ giảng viên nhập điểm
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

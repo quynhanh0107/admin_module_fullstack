@@ -1,0 +1,92 @@
+<div class="container-fluid mt-4">
+    <h2 class="text-primary fw-bold mb-4"><i class="bi bi-speedometer2"></i> Tổng Quan Học Vụ</h2>
+
+    <!-- Hàng chứa các thẻ Thống kê -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white shadow h-100 border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Lượt Đăng Ký</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{ totalEnrollments }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow h-100 border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Đã Chấm Điểm</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{ totalGraded }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark shadow h-100 border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Đang Chờ Nhập Điểm</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{ totalPending }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách chi tiết -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold text-secondary">Nhật ký dữ liệu điểm số</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>STT</th>
+                        <th class="text-start">Tài Khoản Học Sinh</th>
+                        <th class="text-start">Khóa Học</th>
+                        <th>Tín Chỉ</th>
+                        <th>Điểm Số</th>
+                        <th>Trạng Thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (allData.length === 0) {
+                        <tr>
+                            <td colspan="6" class="py-4 text-muted">Hệ thống chưa có dữ liệu.</td>
+                        </tr>
+                    }
+
+                    @for (item of allData; track item.id; let i = $index) {
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <!-- Lưu ý: Tùy vào cách bạn đặt tên biến trong Entity StudentCourse, 
+                                 có thể là item.student.username hoặc item.user.username -->
+                            <td class="text-start fw-bold text-primary">{{ item.student?.username || 'N/A' }}</td>
+                            <td class="text-start">{{ item.course?.name }} ({{ item.course?.courseCode }})</td>
+                            <td>{{ item.course?.credits }}</td>
+                            
+                            <!-- Hiển thị điểm số -->
+                            <td>
+                                @if (item.grade !== null && item.grade !== undefined) {
+                                    <span class="fs-6 fw-bold" 
+                                          [class.text-success]="item.grade >= 5" 
+                                          [class.text-danger]="item.grade < 5">
+                                        {{ item.grade }}
+                                    </span>
+                                } @else {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+
+                            <!-- Hiển thị Badge Trạng thái -->
+                            <td>
+                                @if (item.grade !== null && item.grade !== undefined) {
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                } @else {
+                                    <span class="badge bg-warning text-dark">Chờ điểm</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
