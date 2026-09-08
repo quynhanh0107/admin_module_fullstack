@@ -1,6 +1,8 @@
 # Hệ Thống Quản Lý Học Vụ (Course Management System)
 
 Một hệ thống quản lý đào tạo toàn diện được xây dựng với kiến trúc Client-Server, áp dụng mô hình bảo mật Phân quyền linh hoạt (RBAC - Role Based Access Control). Dự án giúp số hóa quy trình quản lý khóa học, đăng ký môn học và theo dõi điểm số giữa Nhà trường, Giáo viên và Học sinh.
+
+[VID DEMO](https://www.youtube.com/watch?v=Ja4ByimjfvY)
 ---
 
 ## 1. Tổng quan dự án
