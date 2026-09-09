@@ -2,13 +2,14 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from '@angular/common/http'
 import { Observable } from "rxjs";
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ScoreService {
     private http = inject(HttpClient);
-    private baseApi = "http://localhost:8080/api/enrollments";
+    private baseApi = `${environment.apiUrl}/enrollments`;
 
     getTeacherCourses(username: string): Observable<any> {
         return this.http.get<any>(`${this.baseApi}/teacher/${username}/courses`);
