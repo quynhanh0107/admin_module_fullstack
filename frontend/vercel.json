@@ -5,4 +5,4 @@
       "destination": "/index.html"
     }
   ]
-} //handle single page application; avoid 404 error when refreshing page
+} 
