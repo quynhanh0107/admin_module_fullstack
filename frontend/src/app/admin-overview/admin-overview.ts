@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-admin-overview',
@@ -12,6 +13,8 @@ export class AdminOverview implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
+  private baseUrl = `${environment.apiUrl}/enrollments`;
+
   allData: any[] = [];
   
   // Các biến lưu con số thống kê
@@ -21,7 +24,7 @@ export class AdminOverview implements OnInit {
 
   ngOnInit(): void {
     // gọi api lấy toàn bộ dữ liệu hệ thống
-    this.http.get<any[]>('http://localhost:8080/api/enrollments/all').subscribe({
+    this.http.get<any[]>(`${this.baseUrl}/all`).subscribe({
       next: (res) => {
         this.allData = res;
         this.calculateStats(); 

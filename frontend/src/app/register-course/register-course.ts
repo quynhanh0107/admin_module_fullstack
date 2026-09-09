@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register-course',
@@ -12,6 +13,8 @@ export class RegisterCourse implements OnInit{
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
+  private baseUrl = environment.apiUrl;
+
   availableCourses: any[] = [];
   currentUserId: string = '';
   enrolledCourseIds: string[] = [];
@@ -22,7 +25,7 @@ export class RegisterCourse implements OnInit{
     
     // gọi api lấy các môn đã đăng ký trước đó
     if (this.currentUserId) {
-      this.http.get<any[]>(`http://localhost:8080/api/enrollments/student/${this.currentUserId}/scores`).subscribe({
+      this.http.get<any[]>(`${this.baseUrl}/enrollments/student/${this.currentUserId}/scores`).subscribe({
         next: (res) => {
           this.enrolledCourseIds = res.map(item => item.course?.id);
           this.cdr.detectChanges();
@@ -30,7 +33,7 @@ export class RegisterCourse implements OnInit{
       });
     }
 
-    this.http.get<any[]>('http://localhost:8080/api/courses').subscribe({
+    this.http.get<any[]>(`${this.baseUrl}/courses`).subscribe({
       next: (res) => {
         this.availableCourses = res;
         this.cdr.detectChanges();
@@ -61,7 +64,7 @@ export class RegisterCourse implements OnInit{
       courseId: courseId
     };
 
-    this.http.post('http://localhost:8080/api/enrollments', payload).subscribe({
+    this.http.post(`${this.baseUrl}/enrollments`, payload).subscribe({
       next: (res) => {
         alert('Đăng ký môn thành công');
         this.enrolledCourseIds.push(courseId);

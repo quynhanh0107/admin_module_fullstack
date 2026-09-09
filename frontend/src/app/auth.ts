@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs'; // handler asynchronous data streams
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -13,11 +14,11 @@ export class Auth {
         private http: HttpClient
     ) {}
 
-    private apiUrl = 'http://localhost:8080/api/auth';
+    private baseApi = `${environment.apiUrl}/auth`;
 
     //-- hàm nhận username, password, và gửi đi
     login(credentials: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+        return this.http.post(`${this.baseApi}/login`, credentials).pipe(
             tap({
                 next: (response: any) => {
                     this.saveToken(response.token_ngan_han, response.refreshToken);
@@ -31,7 +32,7 @@ export class Auth {
 
     refreshToken(): Observable<any> {
         const refreshToken = this.getRefreshToken();
-        return this.http.post(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+        return this.http.post(`${this.baseApi}/refresh`, { refreshToken }).pipe(
             tap({
                 next: (response: any) => {
                     if (isPlatformBrowser(this.platformId)){
@@ -44,7 +45,7 @@ export class Auth {
 
     logout() {
         const refreshToken = this.getRefreshToken();
-        this.http.post(`${this.apiUrl}/logout`, { refreshToken }).subscribe({
+        this.http.post(`${this.baseApi}/logout`, { refreshToken }).subscribe({
             next: () => this.removeToken(),
             error: () => this.removeToken()
         });

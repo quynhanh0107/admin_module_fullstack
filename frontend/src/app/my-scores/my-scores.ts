@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-my-scores',
@@ -11,12 +12,15 @@ import { HttpClient } from '@angular/common/http';
 export class MyScores implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private baseUrl = environment.apiUrl;
 
   currentUserId: string = '';
   myScores: any[] = [];
   averageScore: number = 0;
 
   ngOnInit(): void {
+
+
     // Lấy ID học sinh từ Local Storage
     this.currentUserId = localStorage.getItem('userId') || '';
 
@@ -26,7 +30,7 @@ export class MyScores implements OnInit {
     }
 
     // gọi API lấy danh sách môn đã đăng ký kèm điểm số của học sinh
-    this.http.get<any[]>(`http://localhost:8080/api/enrollments/student/${this.currentUserId}/scores`).subscribe({
+    this.http.get<any[]>(`${this.baseUrl}/enrollments/student/${this.currentUserId}/scores`).subscribe({
       next: (res) => {
         this.myScores = res; // Gán dữ liệu thật vào mảng
         this.calculateGPA(); // Tính toán lại điểm GPA ngay lập tức
