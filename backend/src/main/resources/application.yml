@@ -4,9 +4,9 @@ spring:
 
   # 1. Cấu hình kết nối PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5433/rbac_db
-    username: admin
-    password: 4550
+    url: jdbc:postgresql://[aws-0-eu-west-2.pooler.supabase.com:5432/postgres?sslmode=require](https://aws-0-eu-west-2.pooler.supabase.com:5432/postgres?sslmode=require)
+    username: postgres.pkelxryqkylthhbnsdds
+    password: gobexam010706
     driver-class-name: org.postgresql.Driver
 
   # 2. Cấu hình JPA / Hibernate (Công cụ ánh xạ Java - SQL)
