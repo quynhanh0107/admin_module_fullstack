@@ -50,7 +50,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         //cấp quyền truy cập cho cổng Frontend dc phép gọi API
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:5173", "https://admin-module-fullstack-1.vercel.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         
         //cho phép gửi các Header chứa dữ liệu, Authorization để gửi JWT
